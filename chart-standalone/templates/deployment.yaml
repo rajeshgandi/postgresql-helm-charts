@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: standalone-postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: standalone-postgresql
+  template:
+    metadata:
+      labels:
+        app: standalone-postgresql
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.user }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgresql.password }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.database }}
+            - name: PGDATA
+              value: "/var/lib/postgresql/data"
+            - name: PRIMARY_HOST
+              value: "primary-postgresql.default.svc.cluster.local" 
+            - name: PGHOST
+              value: "/run/postgresql"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgresql-data
+          persistentVolumeClaim:
+            claimName: standalone-postgresql-pvc
+

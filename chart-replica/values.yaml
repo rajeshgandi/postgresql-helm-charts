@@ -1,0 +1,9 @@
+postgresql:
+  user: postgres
+  image: postgres:17  
+  password: postgres
+  database: ps_db
+  replica:
+    volumeSize: 1Gi
+  primaryHost: "primary-postgresql.default.svc.cluster.local"
+
